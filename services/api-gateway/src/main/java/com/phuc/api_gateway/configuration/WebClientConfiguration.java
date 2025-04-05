@@ -1,6 +1,6 @@
-package com.phuc.gateway.configuration;
+package com.phuc.api_gateway.configuration;
 
-import com.phuc.gateway.repository.IdentityClient;
+import com.phuc.api_gateway.repository.IdentityClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,7 +17,7 @@ public class WebClientConfiguration {
     @Bean
     WebClient webClient(){
         return WebClient.builder()
-                .baseUrl("http://localhost:8080/identity")
+                .baseUrl("lb://identity-service/identity")
                 .build();
     }
 

@@ -1,4 +1,4 @@
-package com.phuc.gateway.repository;
+package com.phuc.api_gateway.repository;
 
 import com.phuc.gateway.dto.ApiResponse;
 import com.phuc.gateway.dto.request.IntrospectRequest;
