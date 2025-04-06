@@ -4,7 +4,7 @@ server:
     context-path: /profile
 spring:
   neo4j:
-    uri: bolt://localhost:7687
+    uri: bolt://localhost:7688
     authentication:
       username: neo4j
       password: 12345678
