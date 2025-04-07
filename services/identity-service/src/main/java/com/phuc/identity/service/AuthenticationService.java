@@ -81,8 +81,10 @@ public class AuthenticationService {
         if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         var token = generateToken(user);
-
-        return AuthenticationResponse.builder().token(token).build();
+        Date expiryTime = new Date(
+                Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
+        );
+        return AuthenticationResponse.builder().token(token).expiryTime(expiryTime).build();
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {

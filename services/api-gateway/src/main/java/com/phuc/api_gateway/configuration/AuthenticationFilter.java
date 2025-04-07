@@ -1,7 +1,7 @@
 package com.phuc.api_gateway.configuration;
 
+import com.phuc.api_gateway.dto.response.ApiResponse;
 import com.phuc.api_gateway.service.IdentityService;
-import com.phuc.gateway.dto.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;

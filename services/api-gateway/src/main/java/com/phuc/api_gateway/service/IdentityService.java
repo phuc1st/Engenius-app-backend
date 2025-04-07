@@ -1,9 +1,9 @@
 package com.phuc.api_gateway.service;
 
+import com.phuc.api_gateway.dto.request.IntrospectRequest;
+import com.phuc.api_gateway.dto.response.ApiResponse;
+import com.phuc.api_gateway.dto.response.IntrospectResponse;
 import com.phuc.api_gateway.repository.IdentityClient;
-import com.phuc.gateway.dto.ApiResponse;
-import com.phuc.gateway.dto.request.IntrospectRequest;
-import com.phuc.gateway.dto.response.IntrospectResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

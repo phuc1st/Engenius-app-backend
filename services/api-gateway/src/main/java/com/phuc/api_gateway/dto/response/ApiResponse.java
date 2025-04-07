@@ -1,4 +1,4 @@
-package com.phuc.gateway.dto.response;
+package com.phuc.api_gateway.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

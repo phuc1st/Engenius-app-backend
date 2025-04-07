@@ -1,4 +1,4 @@
-package com.phuc.gateway.dto.response;
+package com.phuc.api_gateway.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
