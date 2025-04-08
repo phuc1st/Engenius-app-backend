@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.phuc.identity.dto.request.ProfileCreationRequest;
 import com.phuc.identity.dto.response.UserProfileResponse;
 
-@FeignClient(name = "profile-service",
+@FeignClient(name = "PROFILE-SERVICE",
         configuration = { AuthenticationRequestInterceptor.class })
 public interface ProfileClient {
     @PostMapping(value = "/profile/internal/users", produces = MediaType.APPLICATION_JSON_VALUE)
