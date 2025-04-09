@@ -13,6 +13,7 @@ spring:
             - StripPrefix=2
 server:
   port: 8222
+  address: 0.0.0.0
 
 app:
   api-prefix: /api/v1
