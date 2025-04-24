@@ -66,10 +66,10 @@ public class UserService {
         // Publish message to kafka
         kafkaTemplate.send("onboard-successful", "Welcome our new member " + user.getUsername());
 
-        var userCreationReponse = userMapper.toUserResponse(user);
-        userCreationReponse.setId(profile.getResult().getId());
+        var userCreationResponse = userMapper.toUserResponse(user);
+        userCreationResponse.setId(profile.getResult().getId());
 
-        return userCreationReponse;
+        return userCreationResponse;
     }
 
     public UserResponse getMyInfo() {

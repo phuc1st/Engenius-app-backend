@@ -1,0 +1,17 @@
+server:
+  port: 8240
+  servlet:
+    context-path: /learn
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/engenius_learn_service"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  eureka:
+    client:
+      fetch-registry: true

@@ -11,6 +11,12 @@ spring:
             - Path=/api/v1/identity/**
           filters:
             - StripPrefix=2
+        - id: learn-service
+          uri: lb://LEARN-SERVICE
+          predicates:
+            - Path=/api/v1/learn/**
+          filters:
+            - StripPrefix=2
 server:
   port: 8222
   address: 0.0.0.0

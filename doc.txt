@@ -1,0 +1,5 @@
+api-gateway: 8222
+eureka 8761
+identity: 8230
+profile 8081
+learn-service:8240
