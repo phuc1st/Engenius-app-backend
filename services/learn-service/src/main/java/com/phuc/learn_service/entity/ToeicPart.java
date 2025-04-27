@@ -16,8 +16,9 @@ import java.util.List;
 @Entity
 @Table(name = "toeic_parts")
 public class ToeicPart {
-    @Id @GeneratedValue
-    Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
     int partNumber;
 
     @ManyToOne

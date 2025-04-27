@@ -4,6 +4,7 @@ import com.phuc.learn_service.dto.QuestionBlockDTO;
 import com.phuc.learn_service.dto.QuestionDTO;
 import com.phuc.learn_service.dto.ToeicPartDTO;
 import com.phuc.learn_service.dto.ToeicTestDTO;
+import com.phuc.learn_service.dto.response.ToeicTestSummaryResponse;
 import com.phuc.learn_service.entity.Question;
 import com.phuc.learn_service.entity.QuestionBlock;
 import com.phuc.learn_service.entity.ToeicPart;
@@ -23,5 +24,7 @@ public interface ToeicTestMapper {
 
     QuestionDTO toDto(Question entity);
     Question toEntity(QuestionDTO dto);
+
+    ToeicTestSummaryResponse toeicTestSummaryResponse(ToeicTest entity);
 }
 

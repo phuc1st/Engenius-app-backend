@@ -16,7 +16,8 @@ import java.util.List;
 @Entity
 @Table(name = "question_blocks")
 public class QuestionBlock {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String audioUrl;
     String imageUrl;

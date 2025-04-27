@@ -18,7 +18,8 @@ import java.util.List;
 @Table(name = "toeic_tests")
 public class ToeicTest {
     @Id
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
     String name;
     Instant createdAt;
 

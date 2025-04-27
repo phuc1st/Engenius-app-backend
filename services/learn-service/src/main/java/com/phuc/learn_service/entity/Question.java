@@ -16,7 +16,8 @@ import java.util.List;
 @Entity
 @Table(name = "questions")
 public class Question {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     int number;
     @Column(columnDefinition="TEXT")

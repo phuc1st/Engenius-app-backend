@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ToeicTestDTO {
-    String id;
+    int id;
     String name;
     Instant createdAt;
     List<ToeicPartDTO> parts;

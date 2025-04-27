@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ToeicPartDTO {
-    Long id;
+    int id;
     int partNumber;
     List<QuestionBlockDTO> blocks;
 }
