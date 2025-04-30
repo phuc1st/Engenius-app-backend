@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 public class TestAttemptAnswerResponse {
     Long id;
     Long questionId;
+    int number;
     int selectedIndex;
     boolean correct;
 }

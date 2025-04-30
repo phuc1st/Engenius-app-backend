@@ -1,8 +1,13 @@
 package com.phuc.learn_service.service;
 
+import com.phuc.learn_service.dto.request.AnswerRequest;
 import com.phuc.learn_service.dto.request.SubmitTestRequest;
+import com.phuc.learn_service.dto.response.TestAttemptAnswerResponse;
 import com.phuc.learn_service.dto.response.TestAttemptResponse;
-import com.phuc.learn_service.entity.*;
+import com.phuc.learn_service.entity.Question;
+import com.phuc.learn_service.entity.TestAttempt;
+import com.phuc.learn_service.entity.TestAttemptAnswer;
+import com.phuc.learn_service.entity.ToeicTest;
 import com.phuc.learn_service.exception.AppException;
 import com.phuc.learn_service.exception.ErrorCode;
 import com.phuc.learn_service.mapper.TestAttemptMapper;
@@ -15,6 +20,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,36 +44,47 @@ public class TestAttemptService {
             return newAttempt;
         });
 
-        Map<Long, Integer> correctAnswerMap = new HashMap<>();
-
-        for (ToeicPart part : toeicTest.getParts()) {
-            for (QuestionBlock questionBlock : part.getBlocks()) {
-                for (Question question : questionBlock.getQuestions()) {
-                    correctAnswerMap.put(question.getId(), question.getCorrectIndex());
-                }
-            }
-        }
+        Map<Long, Question> questionMap = toeicTest.getParts().stream()
+                .flatMap(part -> part.getBlocks().stream())
+                .flatMap(questionBlock -> questionBlock.getQuestions().stream())
+                .collect(Collectors.toMap(Question::getId, q -> q));
 
         int correctCount = 0;
 
-        for (TestAttemptAnswer testAttemptAnswer : testAttempt.getAnswers()) {
-            Integer correctIndex = correctAnswerMap.get(testAttemptAnswer.getQuestionId());
-            boolean correct = Objects.equals(testAttemptAnswer.getSelectedIndex(), correctIndex);
+        List<TestAttemptAnswer> answers = new ArrayList<>();
+        for (AnswerRequest answerRequest : request.getAnswers()) {
+            Question question = questionMap.get(answerRequest.getQuestionId());
+             if (question == null) continue;
 
+            boolean correct = Objects.equals(answerRequest.getSelectedIndex(), question.getCorrectIndex());
             if (correct) correctCount++;
 
-            testAttemptAnswer.setCorrect(correct);
-            testAttemptAnswer.setAttempt(testAttempt);
+            answers.add(TestAttemptAnswer.builder()
+                    .question(question)
+                    .selectedIndex(answerRequest.getSelectedIndex())
+                    .correct(correct)
+                    .attempt(testAttempt)
+                    .build());
         }
 
-        int totalQuestion = correctAnswerMap.size();
+        int totalQuestion = questionMap.size();
         double score = (totalQuestion == 0) ? 0 : (((double) correctCount / totalQuestion) * 100);
 
+        testAttempt.setAnswers(answers);
         testAttempt.setCorrectCount(correctCount);
         testAttempt.setTotalQuestion(totalQuestion);
         testAttempt.setScore(score);
 
         return testAttemptMapper.toTestAttemptResponse
                 (testAttemptRepository.save(testAttempt));
+    }
+
+    public List<TestAttemptAnswerResponse> getTestAttempt(int testId, String userId) {
+        Optional<TestAttempt> existingAttemptOpt =
+                testAttemptRepository.findByUserIdAndToeicTest_Id
+                        (userId, testId);
+
+        return existingAttemptOpt.map(testAttempt -> testAttempt.getAnswers().stream()
+                .map(testAttemptMapper::testAttemptAnswerResponse).toList()).orElse(Collections.emptyList());
     }
 }

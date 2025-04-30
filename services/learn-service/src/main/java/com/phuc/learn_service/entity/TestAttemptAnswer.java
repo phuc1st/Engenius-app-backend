@@ -1,5 +1,6 @@
 package com.phuc.learn_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,7 +16,12 @@ public class TestAttemptAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long questionId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    @JsonIgnore // Tránh lặp vô hạn khi serialize
+    Question question;
+
     int selectedIndex;
     boolean correct;
 
