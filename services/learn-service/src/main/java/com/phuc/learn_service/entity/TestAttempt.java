@@ -33,7 +33,7 @@ public class TestAttempt {
     int totalQuestion;
     double score;
 
-    @OneToMany(mappedBy="attempt", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="attempt", cascade=CascadeType.ALL, orphanRemoval = true)
     List<TestAttemptAnswer> answers;
 }
 
