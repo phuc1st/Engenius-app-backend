@@ -20,7 +20,7 @@ public class VocabularyTopic {
     Long id;
 
     String topicName;
-    boolean isNew;
+    boolean newTopic;
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     List<FlashCard> flashCards = new ArrayList<>();

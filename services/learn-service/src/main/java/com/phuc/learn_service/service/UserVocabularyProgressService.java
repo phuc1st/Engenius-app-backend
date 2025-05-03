@@ -1,5 +1,7 @@
 package com.phuc.learn_service.service;
 
+import com.phuc.learn_service.dto.request.UserFlashCardUpdateRequest;
+import com.phuc.learn_service.dto.response.UserFlashCardProgressResponse;
 import com.phuc.learn_service.dto.response.UserVocabularyTopicProgressResponse;
 import com.phuc.learn_service.entity.FlashCard;
 import com.phuc.learn_service.entity.UserFlashCardProgress;
@@ -7,6 +9,7 @@ import com.phuc.learn_service.entity.UserVocabularyTopicProgress;
 import com.phuc.learn_service.entity.VocabularyTopic;
 import com.phuc.learn_service.exception.AppException;
 import com.phuc.learn_service.exception.ErrorCode;
+import com.phuc.learn_service.mapper.UserFlashCardProgressMapper;
 import com.phuc.learn_service.mapper.UserVocabularyTopicProgressMapper;
 import com.phuc.learn_service.repository.FlashCardRepository;
 import com.phuc.learn_service.repository.UserFlashCardProgressRepository;
@@ -18,10 +21,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,8 +34,9 @@ public class UserVocabularyProgressService {
     FlashCardRepository flashCardRepository;
 
     UserVocabularyTopicProgressMapper userVocabularyTopicProgressMapper;
+    UserFlashCardProgressMapper userFlashCardProgressMapper;
 
-    public UserVocabularyTopicProgress createTopicProgress(String userId, Long topicId) {
+    public UserVocabularyTopicProgressResponse createTopicProgress(String userId, Long topicId) {
         VocabularyTopic topic = vocabularyTopicRepository.findById(topicId)
                 .orElseThrow(() -> new AppException(ErrorCode.VOCABULARY_TOPIC_NOT_EXIST));
 
@@ -52,28 +53,32 @@ public class UserVocabularyProgressService {
                 .memorized(0)
                 .build();
 
-        return vocabularyTopicProgressRepository.save(progress);
+        return userVocabularyTopicProgressMapper
+                .toUserVocabularyTopicProgressResponse(
+                        vocabularyTopicProgressRepository.save(progress));
     }
 
-    public void updateFlashCardStatus(Long progressId, Long flashCardId, boolean memorized) {
-        FlashCard flashCard = flashCardRepository.findById(flashCardId)
+    public void updateFlashCardStatus(UserFlashCardUpdateRequest request) {
+        FlashCard flashCard = flashCardRepository.findById(request.getFlashCardId())
                 .orElseThrow(() -> new AppException(ErrorCode.FLASH_CARD_NOT_EXIST));
-        UserVocabularyTopicProgress topicProgress = vocabularyTopicProgressRepository.findById(progressId)
+
+        UserVocabularyTopicProgress topicProgress = vocabularyTopicProgressRepository
+                .findById(request.getProgressId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_VOCAB_TOPIC_PROGRESS_NOT_FOUND));
 
         Optional<UserFlashCardProgress> existing = flashCardProgressRepository
-                .findByProgressIdAndFlashCardId(progressId, flashCardId);
+                .findByProgressIdAndFlashCardId(request.getProgressId(), request.getFlashCardId());
 
         if (existing.isPresent()) {
             UserFlashCardProgress p = existing.get();
             boolean wasMemorized = p.isMemorized();
-            p.setMemorized(memorized);
+            p.setMemorized(request.isMemorized());
             p.setLastReviewed(LocalDateTime.now());
             flashCardProgressRepository.save(p);
 
             // cập nhật số lượng nếu trạng thái thay đổi
-            if (wasMemorized != memorized) {
-                if (memorized) {
+            if (wasMemorized != request.isMemorized()) {
+                if (request.isMemorized()) {
                     topicProgress.setMemorized(topicProgress.getMemorized() + 1);
                     topicProgress.setUnmemorized(topicProgress.getUnmemorized() - 1);
                 } else {
@@ -87,14 +92,14 @@ public class UserVocabularyProgressService {
             UserFlashCardProgress p = UserFlashCardProgress.builder()
                     .flashCard(flashCard)
                     .progress(topicProgress)
-                    .memorized(memorized)
+                    .memorized(request.isMemorized())
                     .lastReviewed(LocalDateTime.now())
                     .build();
 
             flashCardProgressRepository.save(p);
 
             topicProgress.setStudied(topicProgress.getStudied() + 1);
-            if (memorized) {
+            if (request.isMemorized()) {
                 topicProgress.setMemorized(topicProgress.getMemorized() + 1);
             } else {
                 topicProgress.setUnmemorized(topicProgress.getUnmemorized() + 1);
@@ -133,4 +138,44 @@ public class UserVocabularyProgressService {
                 userVocabularyTopicProgressMapper::toUserVocabularyTopicProgressResponse).toList();
     }
 
+    public List<UserFlashCardProgressResponse> getTopicProgress(Long progressId) {
+        UserVocabularyTopicProgress topicProgress = vocabularyTopicProgressRepository.findById(progressId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_VOCAB_TOPIC_PROGRESS_NOT_FOUND));
+
+        // Lấy toàn bộ flashcard của topic
+        List<FlashCard> allFlashCards = flashCardRepository
+                .findByTopicId(topicProgress.getVocabularyTopic().getId());
+
+        // Lấy tất cả progress hiện có của user cho topic này
+        List<UserFlashCardProgress> existingProgresses = flashCardProgressRepository.findByProgressId(progressId);
+        Map<Long, UserFlashCardProgress> progressMap = new HashMap<>();
+        for (UserFlashCardProgress existingProgress : existingProgresses) {
+            progressMap.put(existingProgress.getFlashCard().getId(), existingProgress);
+        }
+
+        // Tạo danh sách các FlashCardProgress chưa có ⇒ thêm mới
+        List<UserFlashCardProgress> toInsert = new ArrayList<>();
+        for (FlashCard flashCard : allFlashCards) {
+            if (!progressMap.containsKey(flashCard.getId())) {
+                UserFlashCardProgress newProgress = UserFlashCardProgress.builder()
+                        .flashCard(flashCard)
+                        .progress(topicProgress)
+                        .memorized(false)
+                        .lastReviewed(null)
+                        .build();
+                toInsert.add(newProgress);
+            }
+        }
+
+        // Batch insert 1 lần duy nhất
+        if (!toInsert.isEmpty()) {
+            flashCardProgressRepository.saveAll(toInsert);
+            existingProgresses.addAll(toInsert); // để trả về cả phần mới thêm
+        }
+
+        // Mapping sang response DTO
+        return existingProgresses.stream()
+                .map(userFlashCardProgressMapper::toUserFlashCardProgressResponse).toList();
+    }
 }
+//thay đôi response, request, them getflashcardprogress 

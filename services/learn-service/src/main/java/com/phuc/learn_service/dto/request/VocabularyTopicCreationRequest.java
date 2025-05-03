@@ -10,5 +10,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VocabularyTopicCreationRequest {
     String topicName;
-    boolean isNew;
+    boolean newTopic;
 }

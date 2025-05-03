@@ -15,11 +15,13 @@ import com.phuc.learn_service.repository.VocabularyTopicRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -34,7 +36,7 @@ public class VocabularyService {
             throw new AppException(ErrorCode.VOCABULARY_TOPIC_EXIST);
         VocabularyTopic vocabularyTopic = VocabularyTopic.builder()
                 .topicName(request.getTopicName())
-                .isNew(request.isNew())
+                .newTopic(request.isNewTopic())
                 .build();
         return vocabularyTopicMapper.toVocabularyTopicResponse
                 (vocabularyTopicRepository.save(vocabularyTopic));

@@ -15,5 +15,4 @@ public class FlashCardResponse {
     String phonetic;
     String audio;
     String answer;
-    boolean memorized;
 }

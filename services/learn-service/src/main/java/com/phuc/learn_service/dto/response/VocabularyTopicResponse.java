@@ -11,9 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class VocabularyTopicResponse {
     Long id;
     String topicName;
-    boolean isNew;
-    int accuracy;
-    int memorized;
-    int unmemorized;
-    int notStudied;
+    boolean newTopic;
 }

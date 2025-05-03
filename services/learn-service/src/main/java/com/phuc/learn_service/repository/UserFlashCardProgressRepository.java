@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface UserFlashCardProgressRepository extends JpaRepository<UserFlashCardProgress, Long> {
     Optional<UserFlashCardProgress> findByProgressIdAndFlashCardId(Long progressId, Long flashCardId);
+    List<UserFlashCardProgress> findByProgressId(Long progressId);
 }
