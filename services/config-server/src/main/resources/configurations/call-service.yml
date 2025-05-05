@@ -1,0 +1,9 @@
+server:
+  port: 8083 # Port riêng cho REST API
+  servlet:
+    context-path: /call
+
+socketio:
+  host: 0.0.0.0
+  port: 9092
+  context-path: /
