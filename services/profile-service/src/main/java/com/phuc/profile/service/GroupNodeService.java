@@ -16,6 +16,11 @@ public class GroupNodeService {
                 .name(name)
                 .createdBy(createdBy)
                 .build();
-        return groupNodeRepository.save(group);
+        group = groupNodeRepository.save(group);
+        
+        // Tạo quan hệ CREATED_BY giữa người dùng và nhóm
+        groupNodeRepository.createCreatedByRelationship(createdBy, id);
+        
+        return group;
     }
 } 

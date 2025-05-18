@@ -17,6 +17,12 @@ spring:
             - Path=/api/v1/learn/**
           filters:
             - StripPrefix=2
+        - id: file-service
+          uri: lb://FILE-SERVICE
+          predicates:
+            - Path=${app.api-prefix}/file/**
+          filters:
+            - StripPrefix=2
 server:
   port: 8222
   address: 0.0.0.0

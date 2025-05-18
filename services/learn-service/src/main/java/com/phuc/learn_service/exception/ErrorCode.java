@@ -18,6 +18,7 @@ public enum ErrorCode {
     USER_VOCAB_TOPIC_PROGRESS_EXIST(1026, "User has already started this topic", HttpStatus.BAD_REQUEST),
     TASK_ALREADY_COMPLETED(1027, "Task already completed", HttpStatus.BAD_REQUEST),
     TASK_NOT_FOUND(1028, "Task not found", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST(1028, "Invalid request", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
