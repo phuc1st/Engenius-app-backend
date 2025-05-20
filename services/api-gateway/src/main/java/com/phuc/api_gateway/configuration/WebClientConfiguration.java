@@ -1,6 +1,7 @@
 package com.phuc.api_gateway.configuration;
 
 import com.phuc.api_gateway.repository.IdentityClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -15,10 +16,9 @@ import java.util.List;
 @Configuration
 public class WebClientConfiguration {
     @Bean
-    WebClient webClient(){
-        return WebClient.builder()
-                .baseUrl("lb://identity-service/identity")
-                .build();
+    @LoadBalanced
+    WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 
     @Bean
@@ -35,7 +35,8 @@ public class WebClientConfiguration {
     }
 
     @Bean
-    IdentityClient identityClient(WebClient webClient){
+    IdentityClient identityClient(WebClient.Builder builder){
+        WebClient webClient = builder.build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory
                 .builderFor(WebClientAdapter.create(webClient)).build();
 

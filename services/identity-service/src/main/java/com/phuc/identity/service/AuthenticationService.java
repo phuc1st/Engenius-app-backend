@@ -80,11 +80,17 @@ public class AuthenticationService {
 
         if (!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        var token = generateToken(user);
+        var token = generateToken(user, false);
+        var refreshToken = request.isRememberUser() ? generateToken(user, true) : "";
+
         Date expiryTime = new Date(
                 Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
         );
-        return AuthenticationResponse.builder().token(token).expiryTime(expiryTime).build();
+        return AuthenticationResponse.builder()
+                .token(token)
+                .refreshToken(refreshToken)
+                .expiryTime(expiryTime)
+                .build();
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
@@ -114,25 +120,27 @@ public class AuthenticationService {
 
         invalidatedTokenRepository.save(invalidatedToken);
 
-        var username = signedJWT.getJWTClaimsSet().getSubject();
+        var userId = signedJWT.getJWTClaimsSet().getSubject();
 
         var user =
-                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        var token = generateToken(user);
+        var token = generateToken(user, false);
 
         return AuthenticationResponse.builder().token(token).build();
     }
 
-    private String generateToken(User user) {
+    public String generateToken(User user, boolean isRefresh){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getId())
-                .issuer("devteria.com")
+                .issuer("phuc.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
+                        Instant.now().plus(
+                                isRefresh ? REFRESHABLE_DURATION : VALID_DURATION
+                                , ChronoUnit.SECONDS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
@@ -156,10 +164,7 @@ public class AuthenticationService {
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiryTime = (isRefresh)
-                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                : signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
 

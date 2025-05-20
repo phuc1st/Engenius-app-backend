@@ -4,6 +4,7 @@ import com.phuc.learn_service.dto.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -69,6 +70,17 @@ public class GlobalExceptionHandler {
                         : errorCode.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        log.warn("Access Denied: {}", ex.getMessage());
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(ErrorCode.UNAUTHORIZED.getCode()); // Ví dụ mã lỗi: "403"
+        apiResponse.setMessage(ErrorCode.UNAUTHORIZED.getMessage());
+
+        return ResponseEntity.status(ErrorCode.UNAUTHORIZED.getStatusCode()).body(apiResponse);
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {

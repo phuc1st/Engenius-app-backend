@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +41,7 @@ public class ToeicTestService {
     ToeicTestMapper toeicTestMapper;
     FileClient fileClient;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public ToeicTestDTO createToeicTest(ToeicTestDTO request) {
         ToeicTest toeicTest = toeicTestMapper.toEntity(request);
 
@@ -58,6 +60,7 @@ public class ToeicTestService {
                 .orElseThrow(() -> new AppException(ErrorCode.TOEIC_TEST_NOT_EXIST));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public ToeicTestDTO update(int id, ToeicTestDTO dto) {
         ToeicTest exist = toeicTestRepository.findById(id)
                 .orElseThrow(() ->  new AppException(ErrorCode.TOEIC_TEST_NOT_EXIST));
@@ -73,6 +76,7 @@ public class ToeicTestService {
         return toeicTestMapper.toDto(saved);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(int id) {
         toeicTestRepository.deleteById(id);
     }
@@ -89,6 +93,7 @@ public class ToeicTestService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public ToeicTestDTO uploadToeicTest(String toeicTestJson, List<MultipartFile> files ){
         List<FileResponse> uploadedFiles = new ArrayList<>();
 
