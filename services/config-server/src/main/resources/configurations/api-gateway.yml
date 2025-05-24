@@ -20,6 +20,12 @@ spring:
             - Path=${app.api-prefix}/file/**
           filters:
             - StripPrefix=2
+        - id: profile-service
+          uri: lb://PROFILE-SERVICE
+          predicates:
+            - Path=/api/v1/profile/**
+          filters:
+            - StripPrefix=2
 server:
   port: 8222
   address: 0.0.0.0

@@ -18,7 +18,9 @@ public class GroupStudy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false)
+    String avatar;
+
+    @Column(nullable = false,name = "name", unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
     String name;
 
     String description;

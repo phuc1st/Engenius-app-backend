@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Data
 public class GroupStudyResponse {
     Long id;
+    String avatar;
     String name;
     String description;
     String createdBy;
