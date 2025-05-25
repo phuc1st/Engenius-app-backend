@@ -40,7 +40,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/identity/users/registration",
             "/notification/email/send",
             "/learn/.*",
-            "/file/media/download/.*"
+            "/file/media/download/.*",
+            "/call/.*"
     };
 
     @Value("${app.api-prefix}")

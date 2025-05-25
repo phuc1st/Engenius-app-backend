@@ -44,6 +44,18 @@ public class GroupNodeController {
         return ApiResponse.<Void>builder().build();
     }
 
+    @GetMapping("/joined")
+    public ApiResponse<List<GroupNodeResponse>> getJoinedGroups(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        List<GroupNodeResponse> groups = groupNodeService.getJoinedGroups(page, size);
+        
+        return ApiResponse.<List<GroupNodeResponse>>builder()
+                .result(groups)
+                .build();
+    }
+
     @Data
     public static class ProfileGroupCreateRequest {
         private String groupId;

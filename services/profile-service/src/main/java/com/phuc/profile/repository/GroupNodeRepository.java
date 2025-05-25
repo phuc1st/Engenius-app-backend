@@ -40,4 +40,18 @@ public interface GroupNodeRepository extends Neo4jRepository<GroupNode, String> 
     MERGE (u)-[:JOINED]->(g)
 """)
     void joinGroup(@Param("userId") String userId, @Param("groupId") String groupId);
+
+    @Query("""
+    MATCH (u:user_profile {userId: $userId})-[:JOINED]->(g:group)
+    OPTIONAL MATCH (member:user_profile)-[:JOINED]->(g)
+    WITH g, count(member) AS memberCount
+    RETURN g, memberCount, true AS joined
+    SKIP $skip
+    LIMIT $limit
+""")
+    List<GroupStatsDTO> findJoinedGroups(
+            @Param("userId") String userId,
+            @Param("skip") long skip,
+            @Param("limit") long limit
+    );
 } 

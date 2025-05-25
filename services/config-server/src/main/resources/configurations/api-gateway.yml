@@ -26,6 +26,12 @@ spring:
             - Path=/api/v1/profile/**
           filters:
             - StripPrefix=2
+        - id: call-service
+          uri: lb://CALL-SERVICE
+          predicates:
+            - Path=${app.api-prefix}/call/**
+          filters:
+            - StripPrefix=2
 server:
   port: 8222
   address: 0.0.0.0

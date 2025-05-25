@@ -62,4 +62,25 @@ public class GroupNodeService {
         groupNodeRepository.joinGroup(userId, groupId);
     }
 
+    public List<GroupNodeResponse> getJoinedGroups(int page, int size) {
+        long skip = (long) page * size;
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
+        List<GroupStatsDTO> result = groupNodeRepository.findJoinedGroups(userId, skip, size);
+
+        return result.stream().map(map -> {
+            GroupNode group = map.getG();
+            Long memberCount = map.getMemberCount();
+
+            return GroupNodeResponse.builder()
+                    .id(group.getId())
+                    .name(group.getName())
+                    .createdBy(group.getCreatedBy())
+                    .memberCount(memberCount != null ? memberCount.intValue() : 0)
+                    .joined(true)
+                    .build();
+        }).toList();
+    }
+
 } 
