@@ -8,6 +8,7 @@
     <file url="file://$PROJECT_DIR$/services/file-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/identity-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/learn-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/notification-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/profile-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

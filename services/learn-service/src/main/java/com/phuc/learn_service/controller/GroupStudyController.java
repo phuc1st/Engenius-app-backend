@@ -8,7 +8,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,10 +19,18 @@ import org.springframework.web.bind.annotation.*;
 public class GroupStudyController {
     GroupStudyService groupStudyService;
 
-    @PostMapping
-    public ApiResponse<GroupStudyResponse> createGroup(@RequestBody GroupStudyCreateRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<GroupStudyResponse> createGroup(
+            @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
+
+        // Gọi service để tạo nhóm học
+        GroupStudyResponse response = groupStudyService.createGroup(name, description, avatar);
+
         return ApiResponse.<GroupStudyResponse>builder()
-                .result(groupStudyService.createGroup(request))
+                .result(response)
                 .build();
     }
+
 } 

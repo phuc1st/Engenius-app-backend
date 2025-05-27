@@ -2,6 +2,7 @@ package com.phuc.profile.controller;
 
 import com.phuc.profile.dto.ApiResponse;
 import com.phuc.profile.dto.response.GroupNodeResponse;
+import com.phuc.profile.dto.response.UserProfileResponse;
 import com.phuc.profile.service.GroupNodeService;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -53,6 +54,13 @@ public class GroupNodeController {
         
         return ApiResponse.<List<GroupNodeResponse>>builder()
                 .result(groups)
+                .build();
+    }
+
+    @GetMapping("users-in-group")
+    public ApiResponse<List<UserProfileResponse>> getUsersInGroup(@RequestParam String groupId){
+        return ApiResponse.<List<UserProfileResponse>>builder()
+                .result(groupNodeService.getUsersInGroup(groupId))
                 .build();
     }
 

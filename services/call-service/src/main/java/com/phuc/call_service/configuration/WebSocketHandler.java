@@ -3,6 +3,7 @@ package com.phuc.call_service.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phuc.call_service.entity.ChatMessage;
 import com.phuc.call_service.repository.ChatMessageRepository;
+import com.phuc.call_service.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
@@ -22,6 +23,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private ChatMessageRepository chatMessageRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -71,7 +75,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String senderName = (String) payload.get("senderName");
             String content = (String) payload.get("content");
 
-            // 1. Lưu vào MongoDB
+            // Lưu tin nhắn
             ChatMessage chatMessage = ChatMessage.builder()
                     .groupId(groupId)
                     .senderId(senderId)
@@ -81,8 +85,22 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     .build();
             chatMessageRepository.save(chatMessage);
 
-            // 2. Broadcast cho các thành viên trong group
+            // Gửi notification cho các thành viên khác trong group
+            notificationService.sendChatNotification(
+                    groupId, senderId, content
+            );
             Set<String> members = groupMembers.getOrDefault(groupId, Collections.emptySet());
+            /*for (String memberId : members) {
+                if (!memberId.equals(senderId)) { // Không gửi notification cho người gửi
+                    notificationService.sendChatNotification(
+                        memberId,
+                        senderName,
+                        content
+                    );
+                }
+            }*/
+
+            // Broadcast tin nhắn
             for (String memberId : members) {
                 WebSocketSession ws = sessions.get(memberId);
                 if (ws != null && ws.isOpen()) {

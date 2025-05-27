@@ -2,6 +2,7 @@ package com.phuc.profile.repository;
 
 import com.phuc.profile.dto.response.GroupStatsDTO;
 import com.phuc.profile.entity.GroupNode;
+import com.phuc.profile.entity.UserProfile;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -54,4 +55,10 @@ public interface GroupNodeRepository extends Neo4jRepository<GroupNode, String> 
             @Param("skip") long skip,
             @Param("limit") long limit
     );
+
+    @Query("""
+    MATCH (u:user_profile)-[:JOINED]->(g:group {id: $groupId})
+    RETURN u
+""")
+    List<UserProfile> findUsersInGroup(@Param("groupId") String groupId);
 } 
