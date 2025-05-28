@@ -52,6 +52,7 @@ public class GroupStudyService {
         profileServiceClient.createGroupNode(
                 ProfileGroupCreateRequest.builder()
                         .groupId(groupStudy.getId().toString())
+                        .avatarUrl(avatarUrl)
                         .groupName(groupStudy.getName())
                         .createdBy(groupStudy.getCreatedBy())
                         .build()

@@ -33,15 +33,14 @@ public class UserVocabularyProgressController {
     public ApiResponse<UserVocabularyTopicProgressResponse> startLearning(
             @RequestBody UserVocabularyTopicProgressCreationRequest request) {
         return ApiResponse.<UserVocabularyTopicProgressResponse>builder()
-                .result(vocabularyProgressService.createTopicProgress(
-                        request.getUserId(), request.getTopicId()))
+                .result(vocabularyProgressService.createTopicProgress(request.getTopicId()))
                 .build();
     }
 
-    @GetMapping("/user/{userId}/full-progress")
-    public ApiResponse<List<UserVocabularyTopicProgressResponse>> getFullProgress(@PathVariable String userId) {
+    @GetMapping("/user/full-progress")
+    public ApiResponse<List<UserVocabularyTopicProgressResponse>> getFullProgress() {
         return ApiResponse.<List<UserVocabularyTopicProgressResponse>>builder()
-                .result(vocabularyProgressService.getAllProgressWithDefaults(userId))
+                .result(vocabularyProgressService.getAllProgressWithDefaults())
                 .build();
     }
 

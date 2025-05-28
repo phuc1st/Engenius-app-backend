@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "PROFILE-SERVICE", url = "${app.services.profile}")
+@FeignClient(name = "profile-service", url = "${app.services.profile}")
 public interface ProfileServiceClient {
     @GetMapping(value = "/internal/group-node/users-in-group", produces =
             MediaType.APPLICATION_JSON_VALUE)

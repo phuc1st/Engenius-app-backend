@@ -14,31 +14,26 @@ import java.util.List;
 public class DailyTaskController {
     private final DailyTaskService dailyTaskService;
 
-    @GetMapping("/{userId}")
-    public ApiResponse<List<DailyTask>> getDailyTasks(
-        @PathVariable String userId
-    ) {
+    @GetMapping()
+    public ApiResponse<List<DailyTask>> getDailyTasks() {
         return ApiResponse.<List<DailyTask>>builder()
-                .result(dailyTaskService.getDailyTasks(userId))
+                .result(dailyTaskService.getDailyTasks())
                 .build();
     }
 
-    @PostMapping("/{taskId}/complete/{userId}")
+    @PostMapping("/{taskId}/complete")
     public ApiResponse<DailyTask> completeTask(
-        @PathVariable Long taskId,
-        @PathVariable String userId
+        @PathVariable Long taskId
     ) {
         return ApiResponse.<DailyTask>builder()
-                .result(dailyTaskService.completeTask(taskId, userId))
+                .result(dailyTaskService.completeTask(taskId))
                 .build();
     }
 
-    @GetMapping("/progress/{userId}")
-    public ApiResponse<DailyTaskService.DailyTaskProgress> getTaskProgress(
-        @PathVariable String userId
-    ) {
+    @GetMapping("/progress")
+    public ApiResponse<DailyTaskService.DailyTaskProgress> getTaskProgress() {
         return ApiResponse.<DailyTaskService.DailyTaskProgress>builder()
-                .result(dailyTaskService.getTaskProgress(userId))
+                .result(dailyTaskService.getTaskProgress())
                 .build();
     }
 } 

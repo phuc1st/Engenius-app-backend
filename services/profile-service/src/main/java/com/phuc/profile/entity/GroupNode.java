@@ -16,5 +16,6 @@ public class GroupNode {
     @Id
     String id; // Dùng id từ MySQL
     String name;
+    String avatarUrl;
     String createdBy;
 } 

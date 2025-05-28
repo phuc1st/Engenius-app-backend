@@ -13,6 +13,7 @@ public class GroupNodeResponse {
     private String id;
     private String name;
     private String createdBy;
+    private String avatarUrl;
     private int memberCount;
     private boolean joined;
 }

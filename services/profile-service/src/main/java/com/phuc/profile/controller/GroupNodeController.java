@@ -1,6 +1,7 @@
 package com.phuc.profile.controller;
 
 import com.phuc.profile.dto.ApiResponse;
+import com.phuc.profile.dto.request.ProfileGroupCreateRequest;
 import com.phuc.profile.dto.response.GroupNodeResponse;
 import com.phuc.profile.dto.response.UserProfileResponse;
 import com.phuc.profile.service.GroupNodeService;
@@ -23,7 +24,7 @@ public class GroupNodeController {
 
     @PostMapping
     public void createGroupNode(@RequestBody ProfileGroupCreateRequest request) {
-        groupNodeService.createGroupNode(request.getGroupId(), request.getGroupName(), request.getCreatedBy());
+        groupNodeService.createGroupNode(request);
     }
 
     @GetMapping
@@ -62,12 +63,5 @@ public class GroupNodeController {
         return ApiResponse.<List<UserProfileResponse>>builder()
                 .result(groupNodeService.getUsersInGroup(groupId))
                 .build();
-    }
-
-    @Data
-    public static class ProfileGroupCreateRequest {
-        private String groupId;
-        private String groupName;
-        private String createdBy;
     }
 } 

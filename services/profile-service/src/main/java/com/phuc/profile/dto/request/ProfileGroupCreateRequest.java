@@ -1,15 +1,16 @@
-package com.phuc.learn_service.dto.request;
+package com.phuc.profile.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProfileGroupCreateRequest {
     String groupId;
-    String groupName;
     String avatarUrl;
+    String groupName;
     String createdBy;
-} 
+}

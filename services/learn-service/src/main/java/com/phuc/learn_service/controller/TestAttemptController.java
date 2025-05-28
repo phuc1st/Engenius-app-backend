@@ -27,13 +27,12 @@ public class TestAttemptController {
                 .build();
     }
 
-    @GetMapping("/{userId}/{testId}")
+    @GetMapping("/{testId}")
     public ApiResponse<List<TestAttemptAnswerResponse>> getTestAttempt(
-            @PathVariable String userId,
             @PathVariable int testId
     )  {
         return ApiResponse.<List<TestAttemptAnswerResponse>>builder()
-                .result(testAttemptService.getTestAttempt(testId, userId))
+                .result(testAttemptService.getTestAttempt(testId))
                 .build();
     }
     @PostMapping("/save")

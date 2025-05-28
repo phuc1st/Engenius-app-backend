@@ -7,7 +7,9 @@ import com.phuc.notification.dto.response.UserProfileResponse;
 import com.phuc.notification.entity.DeviceToken;
 import com.phuc.notification.repository.DeviceTokenRepository;
 import com.phuc.notification.repository.httpclient.ProfileServiceClient;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class PushNotificationService {
     ProfileServiceClient profileServiceClient;

@@ -18,6 +18,7 @@ import com.phuc.learn_service.repository.VocabularyTopicRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,7 +37,9 @@ public class UserVocabularyProgressService {
     UserVocabularyTopicProgressMapper userVocabularyTopicProgressMapper;
     UserFlashCardProgressMapper userFlashCardProgressMapper;
 
-    public UserVocabularyTopicProgressResponse createTopicProgress(String userId, Long topicId) {
+    public UserVocabularyTopicProgressResponse createTopicProgress(Long topicId) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
         VocabularyTopic topic = vocabularyTopicRepository.findById(topicId)
                 .orElseThrow(() -> new AppException(ErrorCode.VOCABULARY_TOPIC_NOT_EXIST));
 
@@ -109,7 +112,9 @@ public class UserVocabularyProgressService {
         vocabularyTopicProgressRepository.save(topicProgress);
     }
 
-    public List<UserVocabularyTopicProgressResponse> getAllProgressWithDefaults(String userId) {
+    public List<UserVocabularyTopicProgressResponse> getAllProgressWithDefaults() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
         List<VocabularyTopic> allTopics = vocabularyTopicRepository.findAll();
         Map<Long, UserVocabularyTopicProgress> userProgressMap = vocabularyTopicProgressRepository
                 .findByUserId(userId)

@@ -12,6 +12,5 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SubmitTestRequest {
     private int testId;
-    private String userId;
     private List<AnswerRequest> answers;
 }

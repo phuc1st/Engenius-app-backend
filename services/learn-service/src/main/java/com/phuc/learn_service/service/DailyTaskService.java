@@ -5,6 +5,7 @@ import com.phuc.learn_service.exception.AppException;
 import com.phuc.learn_service.exception.ErrorCode;
 import com.phuc.learn_service.repository.DailyTaskRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +18,19 @@ import java.util.List;
 public class DailyTaskService {
     private final DailyTaskRepository dailyTaskRepository;
 
-    public List<DailyTask> getDailyTasks(String userId) {
+    public List<DailyTask> getDailyTasks() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
         LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
         return dailyTaskRepository.findByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
     }
 
     @Transactional
-    public DailyTask completeTask(Long taskId, String userId) {
+    public DailyTask completeTask(Long taskId) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
         DailyTask task = dailyTaskRepository.findById(taskId)
             .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
 
@@ -42,7 +48,10 @@ public class DailyTaskService {
         return dailyTaskRepository.save(task);
     }
 
-    public DailyTaskProgress getTaskProgress(String userId) {
+    public DailyTaskProgress getTaskProgress() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
         LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
 

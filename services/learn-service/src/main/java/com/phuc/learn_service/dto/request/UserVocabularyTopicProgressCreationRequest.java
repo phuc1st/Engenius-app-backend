@@ -9,6 +9,5 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserVocabularyTopicProgressCreationRequest {
-    String userId;
     Long topicId;
 }

@@ -1,6 +1,7 @@
 package com.phuc.profile.repository;
 
 import com.phuc.profile.dto.response.GroupStatsDTO;
+import com.phuc.profile.dto.response.UserProfileResponse;
 import com.phuc.profile.entity.GroupNode;
 import com.phuc.profile.entity.UserProfile;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -57,8 +58,16 @@ public interface GroupNodeRepository extends Neo4jRepository<GroupNode, String> 
     );
 
     @Query("""
-    MATCH (u:user_profile)-[:JOINED]->(g:group {id: $groupId})
-    RETURN u
+MATCH (u:user_profile)-[:JOINED]->(g:group {id: $groupId})
+RETURN 
+    u.userId AS id,       
+    u.username AS username,
+    u.email AS email,
+    u.firstName AS firstName,
+    u.lastName AS lastName,
+    u.dob AS dob,
+    u.city AS city
 """)
-    List<UserProfile> findUsersInGroup(@Param("groupId") String groupId);
+    List<UserProfileResponse> findUsersInGroup(@Param("groupId") String groupId);
+
 } 

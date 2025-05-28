@@ -8,8 +8,8 @@ spring:
       uri: mongodb://root:root@localhost:27017/file-service?authSource=admin
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
+      max-file-size: 50MB
+      max-request-size: 50MB
   eureka:
     client:
       fetch-registry: true

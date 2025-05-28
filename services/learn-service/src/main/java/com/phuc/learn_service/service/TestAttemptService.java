@@ -18,6 +18,7 @@ import com.phuc.learn_service.repository.ToeicTestRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,11 +34,14 @@ public class TestAttemptService {
     TestAttemptMapper testAttemptMapper;
 
     public SubmitTestResponse submitTest(SubmitTestRequest request) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
         ToeicTest toeicTest = toeicTestRepository.findById(request.getTestId())
                 .orElseThrow(() -> new AppException(ErrorCode.TOEIC_TEST_NOT_EXIST));
         Optional<TestAttempt> existingAttemptOpt =
                 testAttemptRepository.findByUserIdAndToeicTest_Id
-                        (request.getUserId(), request.getTestId());
+                        (userId, request.getTestId());
 
         TestAttempt testAttempt = existingAttemptOpt.orElseGet(() -> {
             TestAttempt newAttempt = testAttemptMapper.toTestAttempt(request);
@@ -88,7 +92,10 @@ public class TestAttemptService {
                 .build();
     }
 
-    public List<TestAttemptAnswerResponse> getTestAttempt(int testId, String userId) {
+    public List<TestAttemptAnswerResponse> getTestAttempt(int testId) {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
         Optional<TestAttempt> existingAttemptOpt =
                 testAttemptRepository.findByUserIdAndToeicTest_Id
                         (userId, testId);
@@ -98,11 +105,14 @@ public class TestAttemptService {
     }
 
     public void saveTestAttempt(SubmitTestRequest request){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+
         ToeicTest toeicTest = toeicTestRepository.findById(request.getTestId())
                 .orElseThrow(() -> new AppException(ErrorCode.TOEIC_TEST_NOT_EXIST));
         Optional<TestAttempt> existingAttemptOpt =
                 testAttemptRepository.findByUserIdAndToeicTest_Id
-                        (request.getUserId(), request.getTestId());
+                        (userId, request.getTestId());
 
         TestAttempt testAttempt = existingAttemptOpt.orElseGet(() -> {
             TestAttempt newAttempt = testAttemptMapper.toTestAttempt(request);

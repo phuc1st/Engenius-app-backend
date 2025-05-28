@@ -1,15 +1,18 @@
 package com.phuc.profile.service;
 
+import com.phuc.profile.dto.request.ProfileGroupCreateRequest;
 import com.phuc.profile.dto.response.GroupNodeResponse;
 import com.phuc.profile.dto.response.GroupStatsDTO;
 import com.phuc.profile.dto.response.UserProfileResponse;
 import com.phuc.profile.entity.GroupNode;
 import com.phuc.profile.entity.UserProfile;
+import com.phuc.profile.mapper.GroupNodeMapper;
 import com.phuc.profile.mapper.UserProfileMapper;
 import com.phuc.profile.repository.GroupNodeRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,20 +23,18 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class GroupNodeService {
     GroupNodeRepository groupNodeRepository;
     UserProfileMapper userProfileMapper;
+    GroupNodeMapper groupNodeMapper;
 
-    public GroupNode createGroupNode(String id, String name, String createdBy) {
-        GroupNode group = GroupNode.builder()
-                .id(id)
-                .name(name)
-                .createdBy(createdBy)
-                .build();
+    public GroupNode createGroupNode(ProfileGroupCreateRequest request) {
+        GroupNode group = groupNodeMapper.toGroupNode(request);
         group = groupNodeRepository.save(group);
         
         // Tạo quan hệ CREATED_BY giữa người dùng và nhóm
-        groupNodeRepository.createCreatedByRelationship(createdBy, id);
+        groupNodeRepository.createCreatedByRelationship(group.getCreatedBy(), group.getId());
         
         return group;
     }
@@ -59,6 +60,7 @@ public class GroupNodeService {
                     .id(group.getId())
                     .name(group.getName())
                     .createdBy(group.getCreatedBy())
+                    .avatarUrl(group.getAvatarUrl())
                     .memberCount(memberCount != null ? memberCount.intValue() : 0)
                     .joined(Boolean.TRUE.equals(joined))
                     .build();
@@ -86,6 +88,7 @@ public class GroupNodeService {
                     .id(group.getId())
                     .name(group.getName())
                     .createdBy(group.getCreatedBy())
+                    .avatarUrl(group.getAvatarUrl())
                     .memberCount(memberCount != null ? memberCount.intValue() : 0)
                     .joined(true)
                     .build();
@@ -93,9 +96,12 @@ public class GroupNodeService {
     }
 
     public List<UserProfileResponse> getUsersInGroup(String groupId) {
-        List<UserProfile> users = groupNodeRepository.findUsersInGroup(groupId);
-        return users.stream()
+        List<UserProfileResponse> users = groupNodeRepository.findUsersInGroup(groupId);
+        log.info("USER PROFILE");
+        users.forEach(userProfile -> log.info(userProfile.getId()+userProfile.getId()+userProfile.getUsername()));
+        /*return users.stream()
                 .map(userProfileMapper::toUserProfileResponse)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+        return users;
     }
 } 
