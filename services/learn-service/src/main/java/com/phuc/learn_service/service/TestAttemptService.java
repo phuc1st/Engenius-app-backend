@@ -45,6 +45,7 @@ public class TestAttemptService {
 
         TestAttempt testAttempt = existingAttemptOpt.orElseGet(() -> {
             TestAttempt newAttempt = testAttemptMapper.toTestAttempt(request);
+            newAttempt.setUserId(userId);
             newAttempt.setToeicTest(toeicTest);
             return newAttempt;
         });
@@ -116,6 +117,7 @@ public class TestAttemptService {
 
         TestAttempt testAttempt = existingAttemptOpt.orElseGet(() -> {
             TestAttempt newAttempt = testAttemptMapper.toTestAttempt(request);
+            newAttempt.setUserId(userId);
             newAttempt.setToeicTest(toeicTest);
             return newAttempt;
         });
